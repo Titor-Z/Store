@@ -5,3 +5,12 @@ thinkphp/*
 
 Admin/js/ajax.js
 Admin/js/ajaxUpload.js
+Admin/js/axios.js
+Admin/js/axios.min.js
+
+Admin/less/*.less
+Admin/less/main.css
+
+Admin/upload.html
+
+
