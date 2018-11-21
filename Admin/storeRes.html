@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>商户注册</title>
+    <link rel="stylesheet" href="less/bootstrap.min.css">
+    <link rel="stylesheet" href="less/main.min.css">
+    <style>
+        #true,#false {
+            display: none;
+        }
+        #true:target,
+        #false:target {
+            display: block;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <a href="#" class="return-btn">
+            <img src="images/return.svg" alt="<">
+        </a>
+    </div>
+
+    <div class="row">
+        <section class="content col-12">
+            <form target="iframe" class="section mt-5" name="form" enctype="multipart/form-data" method="post">
+                <section class="section">
+                    <h1 class="h1">商户注册</h1>
+                    <div class="form-group">
+                        <input name="mobile" class="form-control" type="text" placeholder="请输入要注册的商家账户" maxlength="11" minlength="11" required>
+                        <span class="form-text text-muted"><i class="info"></i>商家账户为手机号码</span>
+                    </div>
+                    <div class="form-group">
+                        <input name="password" class="form-control" type="text" placeholder="请设置登录密码" required>
+                        <span class="form-text text-muted"><i class="info"></i>登录密码应在6-16位之间</span>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h1 class="h1">商家信息</h1>
+                    <div class="form-group">
+                        <input name="sname" class="form-control" type="text" placeholder="请输入经营资质主体">
+                        <span class="form-text text-muted"><i class="info"></i>营业执照商家名称</span>
+                    </div>
+                    <div class="form-group">
+                        <input name="snumber" class="form-control" type="text" placeholder="请输入经营资质证件号">
+                        <span class="form-text text-muted"><i class="info"></i>营业资格证号码</span>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="saddress" class="form-control" rows="10" placeholder="请输入商家住所"></textarea>
+                        <span class="form-text text-muted"><i class="info"></i>营业场所</span>
+                    </div>
+
+                    <div class="form-group">
+                        <input id="file" name="scert" class="form-control" type="file" placeholder="请上传营业执照" required>
+                        <span id="tip" class="form-text text-muted"><i class="info"></i>营业执照</span>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <h1 class="h1">服务信息</h1>
+                    <div class="form-group">
+                        <input name="start-time" class="form-control" type="date" placeholder="服务开始时间">
+                        <span class="form-text text-muted"><i class="info"></i>购买服务开始时间</span>
+                    </div>
+                    <div class="form-group">
+                        <input name="end-time" class="form-control" type="date" placeholder="服务截止时间">
+                        <span class="form-text text-muted"><i class="info"></i>服务到期时间</span>
+                    </div>
+                    <div class="form-group">
+                        <select name="product" class="form-control">
+                            <option value="0">请选择产品</option>
+                            <option value="1">产品1</option>
+                        </select>
+                        <span class="form-text text-muted"><i class="info"></i>所使用的产品</span>
+                    </div>
+                    <div class="form-group">
+                        <select name="pay-way" class="form-control">
+                            <option value="0">请选择付款方式</option>
+                            <option value="1">现金</option>
+                            <option value="2">微信</option>
+                            <option value="3">支付宝</option>
+                            <option value="4">银行卡</option>
+                        </select>
+                        <span class="form-text text-muted"><i class="info"></i>付款方式</span>
+                    </div>
+
+                    <button name="save" id="save" class="btn btn-primary col-4" type="button">注册</button>
+                </section>
+            </form>
+        </section>
+    </div>
+
+    <section id="true" class="section img-section text-center">
+        <img class="img-section-img" src="images/success.svg" alt="成功">
+        <h2 class="j-msg">注册成功</h2>
+        <a class="btn btn-primary j-go-home" href="javascript:void(0)">返回控制台</a>
+    </section>
+
+    <section id="false" class="section img-section text-center">
+        <img class="img-section-img" src="images/error.svg" alt="成功">
+        <h2 class="j-msg">注册失败</h2>
+        <a class="btn btn-outline-dark" href="javascript:window.history(-1);">重新注册</a>
+        <a class="btn btn-primary j-go-home" href="javascript:void(0)">返回控制台</a>
+    </section>
+</div>
+
+<iframe name="iframe" src="#" frameborder="0" class="col-12 hidden"></iframe>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/public.js"></script>
+<script type="module">
+    // 导入业务配置文件：
+    import { home, api_host } from './js/main.js';
+
+    $(".return-btn").attr('href', `${home}`);
+    $(".j-go-home").attr("href",`${home}`);
+
+    {
+        let btn = $("#save");
+        let userControl = $("[name='mobile']");
+
+        // 商家手机号验证：
+        userControl.blur(()=>{
+            let _data = {
+                'mobile': valSet(userControl)
+            };
+            if (nullSet([userControl]) === false) return false;
+            removeArrNull(_data);
+
+            $.post(`${api_host}user/has`, {'data': _data}, function (result) {
+                resBindControl(userControl, result);
+                if (result.state === false) {
+                    errorState(userControl, result.text);
+                    btn.attr('disabled', true);
+                    return false;
+                } else {
+                    successState(userControl, result.text);
+                    btn.attr('disabled', false);
+                }
+            });
+        }); // ------------------------ 商家手机号验证 完成 ------------------------ //
+
+
+        let pulse = 0;
+        // 数据提交
+        btn.click( () => {
+
+            pulse = 1;
+
+            let user_res_control = $("[name='mobile']"),
+                password    = $("[name='password']");
+
+            if (nullSet([user_res_control,password])===false) return false;
+
+            let form = document.querySelector("[name='form']");
+            // 上传 提交地址：
+            form.attr("href", `${api_host}store/create`);
+
+            form.submit();
+            btn.attr('disabled', true);
+
+        }); // ------------------------ btn click 完成 ------------------------ //
+
+        // 提交结果返回：
+        let frame = document.querySelector("[name='iframe']");
+        frame.onload = () => {
+            if ( pulse > 0 ) {
+                let body =frame.contentWindow.document;
+                let content = body.querySelector("body").textContent;
+                let result = JSON.parse(content);
+                if (result.state == true) {
+                    window.location.href = '#true';
+                }else{
+                    window.location.href = '#false';
+                }
+                $(".j-msg").text(result.msg);
+            }
+        } // ------------------------ 提交结果返回 ------------------------ //
+
+    }
+</script>
+
+</body>
+</html>
