@@ -1,5 +1,5 @@
-const domain = `https://localhost/`;
-let home = `http://localhost/Admin/`;
+const domain = `https://zt.lipinai.com/`;
+let home = `http://guanli.gezichuang.com:82/Admin/`;
 let api_host = `${domain}API/Api/`;
 
 export {home, api_host};
