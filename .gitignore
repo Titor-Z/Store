@@ -2,3 +2,6 @@
 .DS_Store
 vendor/*
 thinkphp/*
+
+Admin/js/ajax.js
+Admin/js/ajaxUpload.js
